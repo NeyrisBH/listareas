@@ -80,12 +80,8 @@ public class TareaController {
 		Optional<Tarea> tareaEliminar = servicio.consultarTareaPorId(id);
 		if (tareaEliminar.isPresent()) {
 			servicio.eliminarTareaPorId(id);
-			JSONObject mensajeEliminar = new JSONObject();
-			mensajeEliminar.put("Mensaje", "La tarea fue eliminado con exito");
-			return ResponseEntity.status(HttpStatus.OK).build();
+			return ResponseEntity.ok(servicio.consultarTareas());
 		}
-		JSONObject mensajeError = new JSONObject();
-		mensajeError.put("Mensaje", "Tarea no encontrada, no se pudo eliminar");
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}	
 }
