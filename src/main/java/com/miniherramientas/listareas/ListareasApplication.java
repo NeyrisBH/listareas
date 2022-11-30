@@ -1,13 +1,14 @@
 package com.miniherramientas.listareas;
 
 import java.util.Arrays;
-
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 
 @SpringBootApplication
@@ -29,7 +30,15 @@ public class ListareasApplication {
             configuration.setExposedHeaders(Arrays.asList("Authorization"));
             configuration.setAllowedOrigins(Arrays.asList("*"));
 
-            http.csrf().disable().cors().configurationSource(request -> configuration);
+            http.addFilterAfter(new JwtFilter(), UsernamePasswordAuthenticationFilter.class)
+            .authorizeRequests()
+            .antMatchers(HttpMethod.POST, "/api/token").permitAll()
+            .antMatchers(HttpMethod.POST, "/api/usuarios").permitAll()
+            .antMatchers(HttpMethod.GET, "/api/personas").hasAuthority("SCOPED_Admin")
+            .antMatchers(HttpMethod.GET, "/api/personas/**").hasAuthority("SCOPED_User")
+            .anyRequest().authenticated()
+            .and().csrf().disable().cors().configurationSource(request -> configuration);
+            
         }
     }
 }
