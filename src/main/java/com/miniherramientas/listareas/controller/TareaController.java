@@ -82,6 +82,6 @@ public class TareaController {
 			servicio.eliminarTareaPorId(id);
 			return ResponseEntity.ok(servicio.consultarTareas());
 		}
-		return ResponseEntity.status(HttpStatus.OK).build();
+		return new ResponseEntity<>(HttpStatus.OK);
 	}	
 }
